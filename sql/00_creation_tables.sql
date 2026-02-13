@@ -29,7 +29,7 @@ CREATE TABLE public.work_sujets
     sujet VARCHAR
 );
 
-create table work_sujets_thesis
+create table public.work_sujets_thesis
 (
 	id varchar primary key,
 	sujet_thesis varchar
@@ -40,7 +40,7 @@ create table work_sujets_thesis
 -- =============================== -- 
 create table public.tmp_liaison_sujets(
 	id varchar primary key,
-	qid varchar unique not null
+	qid varchar unique
 );
 
 CREATE TABLE public.tmp_table_auteurices

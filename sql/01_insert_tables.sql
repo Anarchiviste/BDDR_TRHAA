@@ -12,7 +12,7 @@ truncate table public.work_sujets;
 -- =============================================================== --
 -- Insertion dans les tables temporaires et nettoyage des donnéees --
 -- =============================================================== -- 
-INSERT INTO tmp_table_auteurices (id, nom, prenom, titre, all_date)
+INSERT INTO public.tmp_table_auteurices (id, nom, prenom, titre, all_date)
 WITH sans_virgule as --A l'issue de cette CTE j'ai une nouvelle colonne nommée "authorName_virgule_corrigee" où chaque nom est séparé d'une virgule de son prenom. J'en ai besoin parce que je sépare mes chaines de caractères grâce à cette virgule plus tard dans ma requête--
 (
     SELECT
@@ -54,8 +54,7 @@ SELECT
     ) AS all_date
 FROM sans_virgule AS sv;
 
---insertion dans la table référence
-insert into tmp_table_reference
+insert into public.tmp_table_reference
 (
 id,
 typologie,
@@ -79,13 +78,12 @@ a.lien_agorha,
 (regexp_matches(a.université, '''nom'':\s*\[''([^'']*?)''', 'g'))[1] AS universite -- match le pattern clé valeur de nom dans la colonne université et rend
 from public.table_reference as a;
 
-ALTER SEQUENCE public.def_table_institution_id_seq RESTART WITH 1; -- Problème identifié ou le serial ne repart de 1 avec le truncate table, nous le remettons à 1 pour cette table.
--- remplissage de la table def_table_institution
-insert into public.def_table_institution
-(
-nom
-)
+ALTER SEQUENCE public.def_table_institution_id_seq RESTART WITH 1; 
+-- Problème identifié ou le serial ne repart de 1 avec le truncate table, nous le remettons à 1 pour cette table.
+insert into public.def_table_institution(nom)
 select distinct(ttr.universite)
 from public.tmp_table_reference ttr;
 
-insert into 
+insert into public.work_sujets(id, sujet)
+select distinct spc.id, spc.sujet
+from public.sujet_produit_cartésiens as spc;
