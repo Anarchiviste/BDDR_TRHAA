@@ -4,8 +4,8 @@ SET search_path TO public;
 -- Destruction préventive des tables à créer -- 
 -- ========================================= --
 --tables de travail-- 
-DROP table if exists public.work_sujet;
-drop table if exists public.work_sujet_thesis;
+DROP table if exists public.work_sujets;
+drop table if exists public.work_sujets_thesis;
 drop table if exists public.work_liaison_sujets;
 -- tables temporaires-- 
 drop table if exists public.tmp_liaison_sujets;
@@ -23,13 +23,13 @@ create table public.work_liaison_sujets
 	reconciliation_sujet varchar
 );
 
-CREATE TABLE public.work_sujet
+CREATE TABLE public.work_sujets
 (
     id VARCHAR PRIMARY KEY,
     sujet VARCHAR
 );
 
-create table work_sujet_thesis
+create table work_sujets_thesis
 (
 	id varchar primary key,
 	sujet_thesis varchar

@@ -4,6 +4,10 @@ SET search_path TO public;
 -- suppression préventive des données des tables --
 -- ============================================= --
 truncate table public.tmp_table_auteurices;
+truncate table public.tmp_table_reference;
+truncate table public.def_table_institution;
+truncate table public.work_sujets;
+
 
 -- =============================================================== --
 -- Insertion dans les tables temporaires et nettoyage des donnéees --
@@ -50,8 +54,6 @@ SELECT
     ) AS all_date
 FROM sans_virgule AS sv;
 
---supprime préventivement les données des tables pour réécrire de 0
-truncate table public.tmp_table_reference;
 --insertion dans la table référence
 insert into tmp_table_reference
 (
@@ -77,8 +79,6 @@ a.lien_agorha,
 (regexp_matches(a.université, '''nom'':\s*\[''([^'']*?)''', 'g'))[1] AS universite -- match le pattern clé valeur de nom dans la colonne université et rend
 from public.table_reference as a;
 
---supprime préventivement les données des tables pour réécrire de 0
-truncate table public.def_table_institution;
 ALTER SEQUENCE public.def_table_institution_id_seq RESTART WITH 1; -- Problème identifié ou le serial ne repart de 1 avec le truncate table, nous le remettons à 1 pour cette table.
 -- remplissage de la table def_table_institution
 insert into public.def_table_institution
@@ -87,3 +87,5 @@ nom
 )
 select distinct(ttr.universite)
 from public.tmp_table_reference ttr;
+
+insert into 
