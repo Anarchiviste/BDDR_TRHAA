@@ -1,9 +1,13 @@
 SET search_path TO public;
 
---supprime préventivement les données des tables pour réécrire de 0
+-- ============================================= --
+-- suppression préventive des données des tables --
+-- ============================================= --
 truncate table public.tmp_table_auteurices;
 
--- Insert dans la table temporaire_auteurices de données venant de la table auteurices
+-- =============================================================== --
+-- Insertion dans les tables temporaires et nettoyage des donnéees --
+-- =============================================================== -- 
 INSERT INTO tmp_table_auteurices (id, nom, prenom, titre, all_date)
 WITH sans_virgule as --A l'issue de cette CTE j'ai une nouvelle colonne nommée "authorName_virgule_corrigee" où chaque nom est séparé d'une virgule de son prenom. J'en ai besoin parce que je sépare mes chaines de caractères grâce à cette virgule plus tard dans ma requête--
 (
@@ -39,7 +43,7 @@ SELECT
         ELSE NULL
     END AS prenom,
     sv.titre,
-    COALESCE( -- Coalesce intègre les colonnes dates de table auteurice et de date regex dans une seule colonne, la priorité est donnée à la date la plus ancienne, puis la date la récente, plus la date récupérée avec la regex.
+    COALESCE( -- nous incorporons les dates récupérées du champs startDate, endDate, mais également les champs récupérés dans le hml du site grâce à un scripte et des regex. 
         make_date(sv.date_debut::integer, 1, 1),
         make_date(sv.date_fin::integer, 1, 1),
         make_date(sv.rnad_date::integer, 1, 1)
