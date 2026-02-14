@@ -1,3 +1,5 @@
+BEGIN;
+
 SET search_path TO public;
 
 -- ============================================= --
@@ -192,3 +194,4 @@ union
 
 select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_time_periods a on lower(b.reconciliation_sujet ) = lower(a."1" ); -- idem
 
+COMMIT;

@@ -1,3 +1,5 @@
+BEGIN;
+
 SET search_path TO public;
 
 truncate def_auteur;
@@ -33,3 +35,5 @@ SET typologie = ttr.typologie,
     universite = ttr.universite
 FROM tmp_table_reference ttr
 WHERE dp.id = ttr.id;
+
+COMMIT;

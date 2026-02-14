@@ -1,3 +1,5 @@
+BEGIN;
+
 SET search_path TO public;
 
 -- ========================================= --
@@ -101,5 +103,13 @@ create table public.def_auteur(
 create table public.def_publication(
 	id varchar primary key,
 	auteur_nom varchar,
-	auteur_prenom varchar
+	auteur_prenom varchar,
+	typologie varchar,
+	statut varchar,
+	linkagorha varchar,
+	linkpublication varchar,
+	langue varchar,
+	universite varchar
 );
+
+COMMIT;
