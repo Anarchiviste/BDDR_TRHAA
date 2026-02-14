@@ -7,6 +7,9 @@ truncate table public.tmp_table_auteurices;
 truncate table public.tmp_table_reference;
 truncate table public.def_table_institution;
 truncate table public.work_sujets;
+truncate table public.work_liaison_sujets;
+truncate table public.work_sujets_thesis;
+truncate table public.work_thesis;
 
 
 -- =============================================================== --
@@ -84,6 +87,76 @@ insert into public.def_table_institution(nom)
 select distinct(ttr.universite)
 from public.tmp_table_reference ttr;
 
-insert into public.work_sujets(id, sujet)
-select distinct spc.id, spc.sujet
+insert into public.work_sujets(reference_id, sujet)
+select distinct id, spc.sujet
 from public.sujet_produit_cartésiens as spc;
+
+INSERT INTO public.work_thesis (reference_id, sujet_thesis)
+SELECT distinct id, sujet_thesis
+FROM public.sujet_produit_cartésiens as spc;
+
+alter sequence public.work_liaison_sujet_id_seq RESTART WITH 1; 
+INSERT INTO public.work_liaison_sujet (reference_id, reconciliation_sujet)
+SELECT DISTINCT reference_id, reconciliation_sujet
+FROM (
+    SELECT reference_id, sujet AS reconciliation_sujet
+    FROM work_sujets
+    UNION ALL
+    SELECT reference_id, sujet_thesis AS reconciliation_sujet
+    FROM work_thesis
+) AS combined
+WHERE reconciliation_sujet IS NOT NULL;
+
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = TRIM(REGEXP_REPLACE(reconciliation_sujet, ' {2,}', ' ', 'g'))
+WHERE reconciliation_sujet LIKE '%  %';
+
+-- Suppression des doubles tirets
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = REGEXP_REPLACE(reconciliation_sujet, '-{2,}', '-', 'g')
+WHERE reconciliation_sujet LIKE '%--%';
+
+-- Inversion des sujet et présujet car dans Rameau la forme est "sujet, présujet" alors que dans wikidata "présujet, sujet"
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = TRIM(
+    SPLIT_PART(reconciliation_sujet, ',', 2) || ' ' || SPLIT_PART(reconciliation_sujet, ',', 1)
+)
+WHERE reconciliation_sujet LIKE '%,%' 
+AND reconciliation_sujet NOT LIKE '%,%,%'  -- Exclut les cas avec plusieurs virgules
+AND POSITION('(' IN reconciliation_sujet) > 0;  -- Cible les sujet avec dates/info entre parenthèses
+
+-- Suppression des espaces avant et après les tirets
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = REGEXP_REPLACE(reconciliation_sujet, '\s*-\s*', '-', 'g');
+
+-- Normalisation de la casse : première lettre en majuscule
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = INITCAP(reconciliation_sujet)
+WHERE reconciliation_sujet = UPPER(reconciliation_sujet) OR reconciliation_sujet = LOWER(reconciliation_sujet);
+
+-- Suppression des espaces multiples autour de la virgule
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = REGEXP_REPLACE(reconciliation_sujet, '\s*,\s*', ', ', 'g');
+
+-- Suppression des espaces en début et fin de chaîne
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = TRIM(reconciliation_sujet);
+
+-- Suppression des caractères spéciaux et normalisation
+UPDATE work_liaison_sujet
+SET reconciliation_sujet = LOWER(
+    TRANSLATE(
+        REGEXP_REPLACE(reconciliation_sujet, '[^\w\s-]', '', 'g'),
+        'àáâãäåāăąèéêëēĕėęěìíîïìĩīĭòóôõöōŏőùúûüũūŭůçćĉċčñńņň',
+        'aaaaaaaaaeeeeeeeeeiiiiiiiioooooooouuuuuuuuccccccnnn'
+    )
+);
+
+INSERT INTO public.tmp_liaison_sujets (qid, reference_id, labelFr, sujet_wikidata)
+select distinct a.qid, a."labelFr", b.reconciliation_sujet, b.reference_id
+from public.wikidata_archaeological_sites as a 
+join public.work_liaison_sujets as b
+	on a."labelFr" = b.reconciliation_sujet
+
+
+

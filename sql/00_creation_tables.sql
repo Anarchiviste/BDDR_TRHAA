@@ -7,6 +7,7 @@ SET search_path TO public;
 DROP table if exists public.work_sujets;
 drop table if exists public.work_sujets_thesis;
 drop table if exists public.work_liaison_sujets;
+drop table if exists public.work_thesis;
 -- tables temporaires-- 
 drop table if exists public.tmp_liaison_sujets;
 drop table if exists public.tmp_table_auteurices;
@@ -19,14 +20,22 @@ drop table if exists public.def_table_institution;
 -- ============================== --
 create table public.work_liaison_sujets
 (
-	id varchar primary key,
+	id serial primary key,
+	reference_id varchar, -- fk publication
 	reconciliation_sujet varchar
 );
 
 CREATE TABLE public.work_sujets
 (
-    id VARCHAR PRIMARY KEY,
+    id serial PRIMARY key,
+    reference_id varchar, -- fk publication
     sujet VARCHAR
+);
+
+create table work_thesis (
+	id serial primary key,
+    reference_id VARCHAR, -- fk publication
+    sujet_thesis VARCHAR
 );
 
 create table public.work_sujets_thesis
@@ -39,8 +48,11 @@ create table public.work_sujets_thesis
 -- création des tables temporaires --
 -- =============================== -- 
 create table public.tmp_liaison_sujets(
-	id varchar primary key,
-	qid varchar unique
+	id serial primary key,
+	qid varchar unique, -- fk wikidata
+	reference_id varchar, -- fk publication
+	labelFr varchar, -- mot rameau de rameauciliation
+	sujet_wikidata varchar
 );
 
 CREATE TABLE public.tmp_table_auteurices
