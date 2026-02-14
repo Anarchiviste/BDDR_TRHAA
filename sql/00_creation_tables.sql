@@ -50,9 +50,9 @@ create table public.work_sujets_thesis
 create table public.tmp_liaison_sujets(
 	id serial primary key,
 	qid varchar, -- fk wikidata
-	reference_id varchar, -- fk publication
-	labelFr varchar, -- mot rameau de rameauciliation
-	sujet_wikidata varchar
+	labelFr varchar, -- Label issu de wikidata
+	rameau varchar, -- Label rameau
+	id_publication varchar -- fk publication
 );
 
 CREATE TABLE public.tmp_table_auteurices

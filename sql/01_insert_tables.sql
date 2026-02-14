@@ -87,6 +87,9 @@ insert into public.def_table_institution(nom)
 select distinct(ttr.universite)
 from public.tmp_table_reference ttr;
 
+--- ============================================= ---
+--- séquence de remplissage des tables de travail ---
+--- ============================================= ---
 insert into public.work_sujets(reference_id, sujet)
 select distinct id, spc.sujet
 from public.sujet_produit_cartésiens as spc;
@@ -153,8 +156,39 @@ SET reconciliation_sujet = LOWER(
     )
 );
 
-INSERT INTO public.tmp_liaison_sujets (qid, reference_id, labelFr, sujet_wikidata)
-select distinct a.qid, a."labelFr", b.reconciliation_sujet, b.reference_id
-from public.wikidata_archaeological_sites as a 
-join public.work_liaison_sujet as b
-on lower(a."labelFr") = lower(b.reconciliation_sujet)
+-- match des references id et des labelfr dans tmp_liaison_sujets
+INSERT INTO public.tmp_liaison_sujets (qid, labelFr, rameau, id_publication)
+SELECT DISTINCT 
+    a.qid,                      -- NULL si pas de match
+    a."labelFr",         -- Toujours présent
+    b.reconciliation_sujet,                -- NULL si pas de match
+    b.reference_id            -- Toujours présent
+FROM public.work_liaison_sujet AS b
+LEFT JOIN public.wikidata_archaeological_sites AS a
+    ON lower(b.reconciliation_sujet) = lower(a."labelFr")
+
+UNION
+
+select wp.qid, wp."labelFr", b.reconciliation_sujet, b.reference_id 
+from work_liaison_sujet as b left join wikidata_persons wp on lower(b.reconciliation_sujet ) = lower(wp."labelFr")
+
+union
+
+select a.qid , a."labelFr", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_places a on lower(b.reconciliation_sujet) = lower(a."labelFr" )
+
+union
+
+select a."0", a."1", b.reconciliation_sujet, b.reference_id  from work_liaison_sujet b left join wikidata_concepts a on lower(b.reconciliation_sujet ) = lower(a."1") -- on sait pas trop pourquoi mais le scripte de M. Challon importe mal cette table et donc utilise les id de colonnes de base.
+
+union 
+
+select a.qid, a."labelFr", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_organizations a on lower(b.reconciliation_sujet) = lower(a."labelFr")
+
+union
+
+select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_art_movements a on lower(b.reconciliation_sujet) = lower(a."1")
+
+union 
+
+select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_time_periods a on lower(b.reconciliation_sujet ) = lower(a."1" );
+
