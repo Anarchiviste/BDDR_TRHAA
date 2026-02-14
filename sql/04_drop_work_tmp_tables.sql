@@ -4,6 +4,7 @@ BEGIN;
 	drop table if exists public.work_sujets;
 	drop table if exists public.work_sujets_thesis;
 	drop table if exists public.work_liaison_sujets;
+	drop table if exists public.work_liaison_sujet;
 	drop table if exists public.work_thesis;
 
 	drop table if exists public.tmp_table_auteurices;

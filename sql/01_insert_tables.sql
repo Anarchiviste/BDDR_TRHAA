@@ -9,7 +9,7 @@ truncate table public.tmp_table_auteurices;
 truncate table public.tmp_table_reference;
 truncate table public.def_table_institution;
 truncate table public.work_sujets;
-truncate table public.work_liaison_sujets;
+truncate table public.work_liaison_sujet;
 truncate table public.work_sujets_thesis;
 truncate table public.work_thesis;
 
