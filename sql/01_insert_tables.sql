@@ -95,7 +95,9 @@ INSERT INTO public.work_thesis (reference_id, sujet_thesis)
 SELECT distinct id, sujet_thesis
 FROM public.sujet_produit_cartésiens as spc;
 
+-- étape de match entre les sujets du jeu trhaa et les sujets wikidata
 alter sequence public.work_liaison_sujet_id_seq RESTART WITH 1; 
+-- Problème identifié ou le serial ne repart de 1 avec le truncate table, nous le remettons à 1 pour cette table.
 INSERT INTO public.work_liaison_sujet (reference_id, reconciliation_sujet)
 SELECT DISTINCT reference_id, reconciliation_sujet
 FROM (
@@ -107,11 +109,12 @@ FROM (
 ) AS combined
 WHERE reconciliation_sujet IS NOT NULL;
 
+-- supprime les doubles espaces
 UPDATE work_liaison_sujet
 SET reconciliation_sujet = TRIM(REGEXP_REPLACE(reconciliation_sujet, ' {2,}', ' ', 'g'))
 WHERE reconciliation_sujet LIKE '%  %';
 
--- Suppression des doubles tirets
+--Suppression des doubles tirets
 UPDATE work_liaison_sujet
 SET reconciliation_sujet = REGEXP_REPLACE(reconciliation_sujet, '-{2,}', '-', 'g')
 WHERE reconciliation_sujet LIKE '%--%';
@@ -129,10 +132,8 @@ AND POSITION('(' IN reconciliation_sujet) > 0;  -- Cible les sujet avec dates/in
 UPDATE work_liaison_sujet
 SET reconciliation_sujet = REGEXP_REPLACE(reconciliation_sujet, '\s*-\s*', '-', 'g');
 
--- Normalisation de la casse : première lettre en majuscule
-UPDATE work_liaison_sujet
-SET reconciliation_sujet = INITCAP(reconciliation_sujet)
-WHERE reconciliation_sujet = UPPER(reconciliation_sujet) OR reconciliation_sujet = LOWER(reconciliation_sujet);
+update work_liaison_sujet
+set reconciliation_sujet = regexp_replace(reconciliation_sujet, '\([^)]*\)', '', 'g');
 
 -- Suppression des espaces multiples autour de la virgule
 UPDATE work_liaison_sujet
@@ -155,8 +156,5 @@ SET reconciliation_sujet = LOWER(
 INSERT INTO public.tmp_liaison_sujets (qid, reference_id, labelFr, sujet_wikidata)
 select distinct a.qid, a."labelFr", b.reconciliation_sujet, b.reference_id
 from public.wikidata_archaeological_sites as a 
-join public.work_liaison_sujets as b
-	on a."labelFr" = b.reconciliation_sujet
-
-
-
+join public.work_liaison_sujet as b
+on lower(a."labelFr") = lower(b.reconciliation_sujet)

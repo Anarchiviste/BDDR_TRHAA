@@ -6,7 +6,7 @@ SET search_path TO public;
 --tables de travail-- 
 DROP table if exists public.work_sujets;
 drop table if exists public.work_sujets_thesis;
-drop table if exists public.work_liaison_sujets;
+drop table if exists public.work_liaison_sujet;
 drop table if exists public.work_thesis;
 -- tables temporaires-- 
 drop table if exists public.tmp_liaison_sujets;
@@ -18,7 +18,7 @@ drop table if exists public.def_table_institution;
 -- ============================== --
 -- création des tables de travail --
 -- ============================== --
-create table public.work_liaison_sujets
+create table public.work_liaison_sujet
 (
 	id serial primary key,
 	reference_id varchar, -- fk publication
@@ -49,7 +49,7 @@ create table public.work_sujets_thesis
 -- =============================== -- 
 create table public.tmp_liaison_sujets(
 	id serial primary key,
-	qid varchar unique, -- fk wikidata
+	qid varchar, -- fk wikidata
 	reference_id varchar, -- fk publication
 	labelFr varchar, -- mot rameau de rameauciliation
 	sujet_wikidata varchar
