@@ -156,8 +156,8 @@ SET reconciliation_sujet = LOWER(
     )
 );
 
--- match des references id et des labelfr dans tmp_liaison_sujets
-INSERT INTO public.tmp_liaison_sujets (qid, labelFr, rameau, id_publication)
+-- match des references id et des labelfr dans def_liaison_sujets
+INSERT INTO public.def_liaison_sujets (qid, labelFr, rameau, id_publication)
 SELECT DISTINCT 
     a.qid,                      -- NULL si pas de match
     a."labelFr",         -- Toujours présent
@@ -186,9 +186,9 @@ select a.qid, a."labelFr", b.reconciliation_sujet, b.reference_id from work_liai
 
 union
 
-select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_art_movements a on lower(b.reconciliation_sujet) = lower(a."1")
+select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_art_movements a on lower(b.reconciliation_sujet) = lower(a."1") -- idem 
 
 union 
 
-select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_time_periods a on lower(b.reconciliation_sujet ) = lower(a."1" );
+select a."0", a."1", b.reconciliation_sujet, b.reference_id from work_liaison_sujet b left join wikidata_time_periods a on lower(b.reconciliation_sujet ) = lower(a."1" ); -- idem
 

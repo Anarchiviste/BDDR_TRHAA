@@ -9,11 +9,14 @@ drop table if exists public.work_sujets_thesis;
 drop table if exists public.work_liaison_sujet;
 drop table if exists public.work_thesis;
 -- tables temporaires-- 
-drop table if exists public.tmp_liaison_sujets;
 drop table if exists public.tmp_table_auteurices;
 drop table if exists public.tmp_table_reference;
+drop table if exists public.tmp_liaison_sujets;
 -- tables définitives--
 drop table if exists public.def_table_institution;
+drop table if exists public.def_liaison_sujets;
+drop table if exists public.def_auteur;
+drop table if exists public.def_publication;
 
 -- ============================== --
 -- création des tables de travail --
@@ -47,13 +50,6 @@ create table public.work_sujets_thesis
 -- =============================== --
 -- création des tables temporaires --
 -- =============================== -- 
-create table public.tmp_liaison_sujets(
-	id serial primary key,
-	qid varchar, -- fk wikidata
-	labelFr varchar, -- Label issu de wikidata
-	rameau varchar, -- Label rameau
-	id_publication varchar -- fk publication
-);
 
 CREATE TABLE public.tmp_table_auteurices
 (
@@ -87,3 +83,23 @@ id serial primary key,
 nom text not null
 );
 
+create table public.def_liaison_sujets(
+	id serial primary key,
+	qid varchar, -- fk wikidata
+	labelFr varchar, -- Label issu de wikidata
+	rameau varchar, -- Label rameau
+	id_publication varchar -- fk publication
+);
+
+create table public.def_auteur(
+	id serial primary key,
+	auteur_nom varchar,
+	auteur_prenom varchar
+	
+);
+
+create table public.def_publication(
+	id varchar primary key,
+	auteur_nom varchar,
+	auteur_prenom varchar
+);
