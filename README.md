@@ -1,31 +1,31 @@
 # BDDR_TRHAA
 
-Le dossier csv doit être télécharger et installer depuis ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) car trop lourd pour github. Un .gitignore a été créé et le dossier csv ne sera pas compris dans les commit et les push.
+Le dossier csv doit être téléchargé et installé depuis ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) car trop lourd pour github. Un .gitignore a été créé et le dossier CSV ne sera pas compris dans les commit et les push.
 
 ## Acquisition des données 
 
-- Acquisition des données en format JSON et CSV envoyé part l'INHA. 
+- Acquisition des données en format JSON et CSV envoyées par l'INHA. 
     - Ouverture du fichier references.csv de l'INHA : constat de l'impossibilité de l'utiliser. Le fichier est corrompu. Les cellules se décalent d'attribut au fur et à mesure et n'ont aucun sens. Cela provient du fait que le CSV utilise le symbole de paragraphe pour séparer les colonnes mais aussi pour séparer les éléments. De ce fait, les informations se décalent au fur et à mesure.
 - Le problème ne vient pas d'un format ou d'une utilisation d'un caractère particulier pour séparer les valeurs.
-- Le Json est plus propre et en apparence complet. Nous avons donc décidé de parser le json à l'aide du logiciel jq et de python. 
+- Le JSON est plus propre et en apparence complet. Nous avons donc décidé de parser le JSON à l'aide du logiciel jq et de Python. 
 
 ## Prise en main de la base de données
 
-Le fichier json est un énorme objet json composé de pleins de sous objets, mais les ojets ne sont pas toujours cohérents entre eux. Certains possèdent des métadonnées liés aux sujets avec des thésaurus, d'autres possèdent des informations moins complêtes avec des informations stockées autre part. Un exemple parlant est la question de la récupération des dates, qui devraient être encodé dans un élément startDate ou endDate, 
+Le fichier JSON est un énorme objet JOSN composé d'une multitude de sous objets, mais les ojets ne sont pas toujours cohérents entre eux. Certains possèdent des métadonnées liés aux sujets avec des thésaurii, d'autres possèdent des informations moins complêtes, parfois stockées autre part. Un exemple parlant est la question de la récupération des dates, qui devraient être encodées dans un élément startDate ou endDate, 
 
-### Parsing du Json avec JQ et création de json intermédiaires
+### Parsing du JSON avec JQ et création de fichiers JSON intermédiaires
 
 Utilisation de requêtes `jq` pour créer des CSV. 
-Utilisation de requêtes `jq` pour créer des plus petits Json convertis par la suite avec `pandas`. 
+Utilisation de requêtes `jq` pour créer des plus petits JSON convertis par la suite avec `pandas`. 
 **Problèmes :** 
 - Relation one-to-many au sein de du CSV 
-- Difficulté à appréhender pandas. 
+- Difficulté à appréhender pandas
 
 Utilisation d'une Regex pour extraire les dates de deux champs : `biblioref` et `display labelling`.
-- `biblioref` comporte : Titre complet - nom de la personne - titre - personnes encadrante - date 
-- `display labelling` comporte : version plus petite du titre, destinée à s'afficher. 
+- `biblioref` comporte : titre complet - nom de la personne - titre - personnes encadrante - date 
+- `display labelling` comporte : une version raccourcie du titre, destinée à l'affichage. 
 
-Voici un exemple de requête jq pour créer un json intermédiaire.
+Voici un exemple de requête jq pour créer un JSON intermédiaire.
 
 ```jq
 jq -r "{ "notices": [ .notices[] | {
@@ -37,7 +37,7 @@ jq -r "{ "notices": [ .notices[] | {
  } ] }" csv_trhaa > notices.json
 ```
 
-Cette requête produit des produits cartésiens et nous donne un objet json intermédiaire que nous transformons en csv avec un scripte python avec pandas. 
+Cette requête produit des produits cartésiens et nous donne un objet JSON intermédiaire que nous transformons en CSV avec un script Python avec pandas. 
 
 ```python
 import pandas as pd
@@ -55,9 +55,9 @@ resultats_df.to_csv('sujet_typologie.csv', index=False)
 ```
 
 
-Certains de nos json ont demander un véritable travail pour retrouver certaines données perdues. Par exemple la question des dates de publications des mémoires était très difficile à sortir des json. Il existe deux champs startDate et endDate qui ne sont souvent que peu utiliser. Par contre un champs nommé refLabel contenait une balise html avec le nom de l'auteur, le titre du mémoire et la date de publication. En matchant avec une regex la balise titre et la supprimant de la balise refLabel, nous avons été capable de récupérer un grand nombre de champs dates. 
+Certains de nos JSON ont demandé un véritable travail pour retrouver certaines données perdues, dont les dates de publication des mémoires. Il existe deux champs startDate et endDate qui ne sont que très peu utilisés. En revanche, un champs nommé refLabel contenait une balise HTML avec le nom de l'auteur, le titre du mémoire et la date de publication. En matchant avec une regex la balise titre et la supprimant de la balise refLabel, nous avons été capables de récupérer un grand nombre de champs dates. 
 
-Voici le scripte d'extraction des dates : 
+Voici le script d'extraction des dates : 
 
 ```python
 import pandas as pd
@@ -71,13 +71,13 @@ resultats = []
 
 for index, row in df.iterrows():
   """
-  boucle récupère les colonnes label, ref et id
-  transforme label et ref en str pour éviter les bug de type
-  créer une regex qui match label
-  si label est matché dans ref alors la string de label est supprimé de ref
-  créer une deuxième regex qui match 4 chiffres à la suite
-  si dans label une date est repérée, alors la date est extrait dans une variable et est stocké dans résultat avec l'id de son objet
-  sinon le terme Null est écrit avec l'id de son objet
+  boucle qui récupère les colonnes label, ref et id
+  transforme label et ref en str pour éviter les bugs de type
+  créer une regex qui matche label
+  si label est matché dans ref alors la string de label est supprimée de ref
+  créer une deuxième regex qui matche 4 chiffres à la suite
+  si dans label une date est repérée, alors la date est extraite dans une variable et est stockée dans le résultat avec l'id de son objet
+  sinon le terme Null est affiché avec l'id de son objet
   """
   label = row['displayLabelLink']
   ref = row['biblioRef']
@@ -113,10 +113,13 @@ for index, row in df.iterrows():
 
 ### Enrichissement des données
 
-- Utilisation de OpenRefine : 
-    - Nous lui avons donné un CSV avec les sujets. 
-    - Vérification à la main et réconciliation avec wikidata 
-    
+- Choix initial de traiter l'enrichissement avec Openrefine : CSV sujets en entrée, export CSV en sortie.
+- Réconciliation avec les entités Wikidata : bon pourcentage de match mais vérification manuelle obligatoire. 
+- Redirection suite à la réunion d'étape du 4.02 : abandon des résultats d'Openrefine, reprise à 0 du traitement du CSV sujets en SQL.
+- Extraction des données Wikidata via des requêtes SPARQL contenues dans un script de lancement : création de 8 fichiers CSV par types d'entités (sites archéologiques, mouvements artistiques, oeuvres, concepts, organisations, personnes, lieux et périodes). 
+- Utilisation de Postgre : import des 8 fichiers issus de l'extraction Wikidata comme tables temporaires, ajout des nos fichiers csv thèmes et références,  traitement d'alignement en SQL. 
+
+
 # Traitement de la base de données après la réunion
 
 ## Nettoyage - Jules / Mélina
