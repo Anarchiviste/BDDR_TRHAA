@@ -2,9 +2,7 @@ BEGIN;
 
 SET search_path TO public;
 
--- ========================================= --
--- Destruction préventive des tables à créer -- 
--- ========================================= --
+-- afin de pouvoir ajuster le code nous dropons les tables préventivement
 --tables de travail-- 
 DROP table if exists public.work_sujets;
 drop table if exists public.work_sujets_thesis;
@@ -20,9 +18,8 @@ drop table if exists public.def_liaison_sujets;
 drop table if exists public.def_auteur;
 drop table if exists public.def_publication;
 
--- ============================== --
--- création des tables de travail --
--- ============================== --
+-- création des tables de travail
+
 create table public.work_liaison_sujet
 (
 	id serial primary key,
@@ -49,9 +46,8 @@ create table public.work_sujets_thesis
 	sujet_thesis varchar
 );
 
--- =============================== --
--- création des tables temporaires --
--- =============================== -- 
+-- création des tables temporaires
+-- Nous avons rajouté une étape table temporaire dont nous n'avions pas forcément besoin, certaines de ses tables ne sont finalement pas utiles 
 
 CREATE TABLE public.tmp_table_auteurices
 (
@@ -76,9 +72,9 @@ CREATE TABLE public.tmp_table_reference
     universite TEXT
 );
 
--- =============================== -- 
--- création des tables définitives -- 
--- =============================== --
+
+-- création des tables définitives
+-- Certaines de ses tables sont finalement légèrement modifiées pas le script de déclaration des foreign keys, qui nous a demandé quelques traitements supplémentaires
 create table public.def_table_institution
 (
 id serial primary key,

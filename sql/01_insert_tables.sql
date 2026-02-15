@@ -2,9 +2,7 @@ BEGIN;
 
 SET search_path TO public;
 
--- ============================================= --
--- suppression préventive des données des tables --
--- ============================================= --
+-- suppression préventive des données des tables 
 truncate table public.tmp_table_auteurices;
 truncate table public.tmp_table_reference;
 truncate table public.def_table_institution;
@@ -14,9 +12,7 @@ truncate table public.work_sujets_thesis;
 truncate table public.work_thesis;
 
 
--- =============================================================== --
--- Insertion dans les tables temporaires et nettoyage des donnéees --
--- =============================================================== -- 
+-- Insertion dans les tables temporaires et nettoyage des donnéees
 INSERT INTO public.tmp_table_auteurices (id, nom, prenom, titre, all_date)
 WITH sans_virgule as --A l'issue de cette CTE j'ai une nouvelle colonne nommée "authorName_virgule_corrigee" où chaque nom est séparé d'une virgule de son prenom. J'en ai besoin parce que je sépare mes chaines de caractères grâce à cette virgule plus tard dans ma requête--
 (
@@ -89,9 +85,7 @@ insert into public.def_table_institution(nom)
 select distinct(ttr.universite)
 from public.tmp_table_reference ttr;
 
---- ============================================= ---
 --- séquence de remplissage des tables de travail ---
---- ============================================= ---
 insert into public.work_sujets(reference_id, sujet)
 select distinct id, spc.sujet
 from public.sujet_produit_cartésiens as spc;
@@ -180,7 +174,8 @@ select a.qid , a."labelFr", b.reconciliation_sujet, b.reference_id from work_lia
 
 union
 
-select a."0", a."1", b.reconciliation_sujet, b.reference_id  from work_liaison_sujet b left join wikidata_concepts a on lower(b.reconciliation_sujet ) = lower(a."1") -- on sait pas trop pourquoi mais le scripte de M. Challon importe mal cette table et donc utilise les id de colonnes de base.
+-- on sait pas trop pourquoi mais le script de M. Challon importe mal cette table et donc utilise les id de colonnes de base.
+select a."0", a."1", b.reconciliation_sujet, b.reference_id  from work_liaison_sujet b left join wikidata_concepts a on lower(b.reconciliation_sujet ) = lower(a."1") 
 
 union 
 
