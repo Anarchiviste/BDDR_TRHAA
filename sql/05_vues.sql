@@ -1,4 +1,7 @@
 BEGIN; 
+
+SET search_path TO public;
+
 -- Quels sont les pays les plus traités dans les sujets en dehors de la France ? 
 
 CREATE VIEW vw_pays_traites AS
