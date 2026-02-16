@@ -94,7 +94,7 @@ INSERT INTO public.work_thesis (reference_id, sujet_thesis)
 SELECT distinct id, sujet_thesis
 FROM public.sujet_produit_cartésiens as spc;
 
--- étape de match entre les sujets du jeu trhaa et les sujets wikidata
+-- étape de match entre les sujets du jeu public et les sujets wikidata
 alter sequence public.work_liaison_sujet_id_seq RESTART WITH 1; 
 -- Problème identifié ou le serial ne repart de 1 avec le truncate table, nous le remettons à 1 pour cette table.
 INSERT INTO public.work_liaison_sujet (reference_id, reconciliation_sujet)

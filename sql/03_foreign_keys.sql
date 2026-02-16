@@ -1,5 +1,7 @@
--- CREATION DES LIAISONS
+BEGIN;
 
+-- CREATION DES LIAISONS
+set search_path to public;
 -- Création, remplissage de la colonne institution, déclaration de la foreign key
 
 ALTER TABLE public.def_publication 
@@ -16,7 +18,10 @@ FOREIGN KEY (id_institution) REFERENCES def_table_institution(id);
 
 
 ALTER TABLE public.def_publication 
-DROP COLUMN universite;
+DROP COLUMN IF EXISTS universite;
+
+ALTER TABLE public.def_publication 
+ADD COLUMN universite VARCHAR;
 
 -- Création remplissage de la colonne id_auteur, déclaration de la foreign key
 
@@ -33,18 +38,21 @@ ALTER TABLE public.def_publication
 ADD CONSTRAINT fk_publication_auteur 
 FOREIGN KEY (id_auteur) REFERENCES def_auteur(id);
 
-
 ALTER TABLE public.def_publication 
-DROP COLUMN auteur_nom,
-DROP COLUMN auteur_prenom;
+DROP COLUMN IF EXISTS auteur_nom,
+DROP COLUMN IF EXISTS auteur_prenom,
+ADD COLUMN auteur_nom VARCHAR,
+ADD COLUMN auteur_prenom VARCHAR;
 
 -- Déclaration de la foreign key pour les sujets
 
 ALTER TABLE public.def_liaison_sujets 
 ADD CONSTRAINT fk_liaison_publication 
-FOREIGN KEY (id_publication) REFERENCES def_publication(id);*/
+FOREIGN KEY (id_publication) REFERENCES def_publication(id);
 
 /*
 Nous faisons face à de gros soucis pour relier les tables wikidata 
 à notre table de liaison car une foreign key ne peut pas être liée à plusieurs tables
 */
+
+COMMIT;

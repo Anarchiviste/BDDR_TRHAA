@@ -2,20 +2,20 @@ BEGIN;
 
 SET search_path TO public;
 
-truncate def_auteur;
+truncate def_auteur cascade;
 alter sequence public.def_auteur_id_seq RESTART WITH 1; 
 
 -- Ici nous remplissons simplement nos tables définitives, nous aurions pu passer une partie de ces étapes car certaines de nos tables temporaires auraient pu être définitives mais nous avons préféré faire comme cela pour ne pas avoir a tout modifier et prendre des risques
 insert into def_auteur (auteur_nom, auteur_prenom)
 select distinct a.nom, a.prenom from tmp_table_auteurices a;
 
-truncate def_publication;
+truncate def_publication cascade;
 
 -- Les étapes suivantes n'ont finalement pas été gardées à la fin car nous avons fait des foreign keys avec des ids
 insert into def_publication (id, auteur_nom, auteur_prenom)
 select distinct(id), nom, prenom from tmp_table_auteurices tta;
 
-drop table if exists def_connexion_auteur_publication;
+drop table if exists def_connexion_auteur_publication cascade;
 
 create table public.def_connexion_auteur_publication
 (
