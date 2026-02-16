@@ -17,4 +17,5 @@ BEGIN;
 	DROP TABLE IF EXISTS public.sujet_typologie_temporaire;
 	DROP TABLE IF EXISTS public.table_auteurices;
 	DROP TABLE IF EXISTS public.table_reference;
+	DROP TABLE IF EXISTS public.def_connexion_auteur_publication;
 COMMIT;
