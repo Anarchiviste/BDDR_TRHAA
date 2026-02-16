@@ -1,4 +1,4 @@
---Vues utilisées : 
+BEGIN; 
 -- Quels sont les pays les plus traités dans les sujets en dehors de la France ? 
 
 CREATE VIEW vw_pays_traites AS
@@ -39,7 +39,7 @@ ORDER BY dti.nom, wam."1" DESC
 
 --Les personnes les plus traitées 
 
-create view vw_personnalites_traitees as 
+CREATE VIEW vw_personnalites_traitees AS 
 (
 SELECT wp."labelFr",
 COUNT(*) AS personnalites_traitees,
@@ -54,3 +54,4 @@ ORDER BY personnalites_traitees desc
 -- Pour requêter la vue : 
 -- SELECT * FROM vvw_personnalites_traitees;
 
+COMMIT; 
