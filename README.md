@@ -4,11 +4,14 @@ Vous trouverez au sein de ce respository notre base de données construite dans 
 
 ## Installation
 
-Certains de nos CSV sont trop lourds pour être acceptés sur Github, il vous sera donc nécessaire de les télécharger en suivant ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) et de les placer dans un dossier `csv` afin de faire fonctionner notre BDDR. 
+> [!IMPORTANT]
+> Certains de nos CSV sont trop lourds pour être acceptés sur Github, il vous sera donc nécessaire de les télécharger en suivant ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) et de les placer dans un dossier `csv` afin de faire fonctionner notre BDDR. 
+> 
+> Afin de garantir son bon fonctionnement, il est également nécessaire de lancer le script nommé `bdd_schema.sql` avant de lancer l'intégralité de nos scripts. 
+> 
+> Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord).
 
-Afin de garantir son bon fonctionnement, il est également nécessaire de lancer le script nommé `bdd_schema.sql` avant de lancer l'intégralité de nos scripts. 
-
-Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord). 
+---
 
 **Tout se passe (configuration, commandes dans le terminal) au sein de ce dossier dans lequel vous lisez ce fichier**
 
