@@ -89,3 +89,12 @@ Comme convenu dans les modalités d'évaluation fournies en début d'année, not
 
 Nous vous fournissons cela dit les différentes évolutions de notre modèle logique ici même. Les différentes étapes de notre réflexion seront précisées dans notre journal de bord. 
 
+![modelisation_donneesV1](https://github.com/user-attachments/assets/12ec4f27-4440-4840-8658-ba82b14b8aa6)
+
+![modelisation_donneesV2](https://github.com/user-attachments/assets/66a3b929-6ec2-4a7b-b820-4f1828e21094)
+
+![modelisation_donneesV3](https://github.com/user-attachments/assets/d95355f4-d930-40e1-9f00-a4a4feabd438)
+
+
+
+
