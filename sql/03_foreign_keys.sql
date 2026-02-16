@@ -40,9 +40,7 @@ FOREIGN KEY (id_auteur) REFERENCES def_auteur(id);
 
 ALTER TABLE public.def_publication 
 DROP COLUMN IF EXISTS auteur_nom,
-DROP COLUMN IF EXISTS auteur_prenom,
-ADD COLUMN auteur_nom VARCHAR,
-ADD COLUMN auteur_prenom VARCHAR;
+DROP COLUMN IF EXISTS auteur_prenom;
 
 -- Déclaration de la foreign key pour les sujets
 

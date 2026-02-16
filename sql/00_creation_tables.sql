@@ -13,7 +13,7 @@ drop table if exists public.tmp_table_auteurices;
 drop table if exists public.tmp_table_reference;
 drop table if exists public.tmp_liaison_sujets;
 -- tables définitives--
-drop table if exists ublic.def_table_institution cascade;
+drop table if exists public.def_table_institution cascade;
 drop table if exists public.def_liaison_sujets cascade;
 drop table if exists public.def_publication cascade;
 drop table if exists public.def_auteur cascade;
