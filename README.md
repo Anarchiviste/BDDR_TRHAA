@@ -93,7 +93,8 @@ Nous vous fournissons cela dit les différentes évolutions de notre modèle log
 
 ![modelisation_donneesV2](https://github.com/user-attachments/assets/66a3b929-6ec2-4a7b-b820-4f1828e21094)
 
-![modelisation_donneesV3](https://github.com/user-attachments/assets/d95355f4-d930-40e1-9f00-a4a4feabd438)
+![modelisation_donneesV3](https://github.com/user-attachments/assets/90408ab8-f458-4752-be5b-02bca35bba91)
+
 
 
 
