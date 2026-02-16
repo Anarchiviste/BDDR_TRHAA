@@ -4,11 +4,14 @@ Vous trouverez au sein de ce respository notre base de données construite dans 
 
 ## Installation
 
-Certains de nos CSV sont trop lourds pour être acceptés sur Github, il vous sera donc nécessaire de les télécharger en suivant ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) et de les placer dans un dossier `csv` afin de faire fonctionner notre BDDR. 
+> [!IMPORTANT]
+> Certains de nos CSV sont trop lourds pour être acceptés sur Github, il vous sera donc nécessaire de les télécharger en suivant ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) et de les placer dans un dossier `csv` afin de faire fonctionner notre BDDR. 
+> 
+> Afin de garantir son bon fonctionnement, il est également nécessaire de lancer le script nommé `bdd_schema.sql` avant de lancer l'intégralité de nos scripts. 
+> 
+> Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord).
 
-Afin de garantir son bon fonctionnement, il est également nécessaire de lancer le script nommé `bdd_schema.sql` avant de lancer l'intégralité de nos scripts. 
-
-Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord). 
+---
 
 **Tout se passe (configuration, commandes dans le terminal) au sein de ce dossier dans lequel vous lisez ce fichier**
 
@@ -85,4 +88,14 @@ python3 run.py
 Comme convenu dans les modalités d'évaluation fournies en début d'année, notre journal de bord sera complété en envoyé le 23 février 2025. 
 
 Nous vous fournissons cela dit les différentes évolutions de notre modèle logique ici même. Les différentes étapes de notre réflexion seront précisées dans notre journal de bord. 
+
+![modelisation_donneesV1](https://github.com/user-attachments/assets/12ec4f27-4440-4840-8658-ba82b14b8aa6)
+
+![modelisation_donneesV2](https://github.com/user-attachments/assets/66a3b929-6ec2-4a7b-b820-4f1828e21094)
+
+![modelisation_donneesV3](https://github.com/user-attachments/assets/90408ab8-f458-4752-be5b-02bca35bba91)
+
+
+
+
 
