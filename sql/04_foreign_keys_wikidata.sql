@@ -217,4 +217,30 @@ ADD CONSTRAINT fk_time_periods
     FOREIGN KEY (qid_time_periods) 
     REFERENCES wikidata_time_periods("0");
 
+-- Petits rajouts que l'on avait oublié
+
+alter table def_publication
+add column date_publication text;
+
+
+update public.def_publication dp 
+set date_publication = public.resultats_nettoyes_avec_dates.date
+from public.resultats_nettoyes_avec_dates
+where dp.id = resultats_nettoyes_avec_dates.id;
+
+UPDATE public.def_publication dp  
+SET date_publication = MAKE_DATE(date_publication::integer, 1, 1);
+
+alter table def_publication
+add column titre text;
+
+
+update public.def_publication dp 
+set titre = public.table_auteurices.titre
+from public.table_auteurices
+where dp.id = table_auteurices.id;
+
+alter table def_publication 
+drop column universite;
+
 COMMIT;

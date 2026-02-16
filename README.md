@@ -1,163 +1,88 @@
 # BDDR_TRHAA
 
-Le dossier csv doit être télécharger et installer depuis ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) car trop lourd pour github. Un .gitignore a été créé et le dossier csv ne sera pas compris dans les commit et les push.
+Vous trouverez au sein de ce respository notre base de données construite dans le cadre de l'évaluation de l'UE3 - Traitement de la donnée. Elle est issue d'un jeu de données transmises par l'INHA. 
 
-## Acquisition des données 
+## Installation
 
-- Acquisition des données en format JSON et CSV envoyé part l'INHA. 
-    - Ouverture du fichier references.csv de l'INHA : constat de l'impossibilité de l'utiliser. Le fichier est corrompu. Les cellules se décalent d'attribut au fur et à mesure et n'ont aucun sens. Cela provient du fait que le CSV utilise le symbole de paragraphe pour séparer les colonnes mais aussi pour séparer les éléments. De ce fait, les informations se décalent au fur et à mesure.
-- Le problème ne vient pas d'un format ou d'une utilisation d'un caractère particulier pour séparer les valeurs.
-- Le Json est plus propre et en apparence complet. Nous avons donc décidé de parser le json à l'aide du logiciel jq et de python. 
+Certains de nos CSV sont trop lourds pour être acceptés sur Github, il vous sera donc nécessaire de les télécharger en suivant ce [lien](https://drive.proton.me/urls/GMHV6RR6X4#4xwlN38D7vdz) et de les placer dans un dossier `csv` afin de faire fonctionner notre BDDR. 
 
-## Prise en main de la base de données
+Afin de garantir son bon fonctionnement, il est également nécessaire de lancer le script nommé `bdd_schema.sql` avant de lancer l'intégralité de nos scripts. 
 
-Le fichier json est un énorme objet json composé de pleins de sous objets, mais les ojets ne sont pas toujours cohérents entre eux. Certains possèdent des métadonnées liés aux sujets avec des thésaurus, d'autres possèdent des informations moins complêtes avec des informations stockées autre part. Un exemple parlant est la question de la récupération des dates, qui devraient être encodé dans un élément startDate ou endDate, 
+Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord). 
 
-### Parsing du Json avec JQ et création de json intermédiaires
+**Tout se passe (configuration, commandes dans le terminal) au sein de ce dossier dans lequel vous lisez ce fichier**
 
-Utilisation de requêtes `jq` pour créer des CSV. 
-Utilisation de requêtes `jq` pour créer des plus petits Json convertis par la suite avec `pandas`. 
-**Problèmes :** 
-- Relation one-to-many au sein de du CSV 
-- Difficulté à appréhender pandas. 
+**Le projet doit s’exécuter avec `python run.py` sans aucune modification du code fourni, seuls le fichier .env doit être modifié.**
 
-Utilisation d'une Regex pour extraire les dates de deux champs : `biblioref` et `display labelling`.
-- `biblioref` comporte : Titre complet - nom de la personne - titre - personnes encadrante - date 
-- `display labelling` comporte : version plus petite du titre, destinée à s'afficher. 
+### Préparation de l'environnement de travail pour le script
 
-Voici un exemple de requête jq pour créer un json intermédiaire.
+#### 1. Créer un environnement virtuel
 
-```jq
-jq -r "{ "notices": [ .notices[] | {
- "id": .id,
- "sujet": .content.subjectInformation.subject[]?.rameau.thesaurus[]?.prefLabels[]?.value,
- "sujet_rameau": .content.subjectInformation.subject[]?.rameau.thesaurus[]?.ref,
- "sujet_thesis": .content.identificationInformation.thesis[]? | .domain.thesaurus[]? | .prefLabels[] | .value,
- "sujet_thesis_rameau": .content.identificationInformation.thesis[]? | .domain.thesaurus[]? | .ref
- } ] }" csv_trhaa > notices.json
+A créer dans ce dossier, à côté du `README.md` et du `run.py`
+
+Pour rappel: `virtualenv env -p python3` ou `python -m venv env`
+
+#### 2. Activer cet environnement
+
+`source env/bin/activate` (ou `source env/Scripts/activate` pour Windows)
+
+#### 3. Importer les bonnes dépendances dans l'environnement
+
+`pip install -r requirements.txt`
+
+---
+
+### Étapes à suivre pour remplir la base
+
+#### 1. Modifier le fichier `.env`
+Le fichier doit contenir toutes les variables suivantes :
+Le fichier est déjà pré remplie avec les informations de base mais vous devez y ajouter les informations d'utilisateur et de mot de passe de votre base de données PostgreSQL.
+
+```env
+pgDatabase=str
+pgUser=str
+pgPassword=str
+pgPort=int
+pgHost=str
+pgSchemaImportsCsv=str
+failOnFirstSqlError=bool
+failOnFirstCsvError=bool
 ```
 
-Cette requête produit des produits cartésiens et nous donne un objet json intermédiaire que nous transformons en csv avec un scripte python avec pandas. 
+- `pgDatabase` : nom de la base à créer/utiliser  pour importer les données et jouer les scripts. Cette base est unique pour l'ensemble du projet.
+- `pgUser` : utilisateur PostgreSQL avec lequel se connecter
+- `pgPassword` : mot de passe PostgreSQL correspondant à l'utilisateur
+- `pgHost` : adresse du serveur PostgreSQL
+- `pgPort` : port du serveur PostgreSQL  
+- `pgSchemaImportsCsv` : schéma où seront importés les CSV  sous forme de table (1 CSV = 1 table du nom du ficheir CSV)
+- `failOnFirstSqlError` : si `True`, le script s’arrête dès qu’une requête SQL échoue  
+- `failOnFirstCsvError` : si `True`, le script s’arrête dès qu’un import CSV dans la base de données échoue  
 
-```python
-import pandas as pd
-import json
+#### 2. Créer la base de données et le schéma
+Dans DBeaver, exécuter deux requêtes qui permettront de créer une base de données et un schéma dédié. Les informations que vous transmettez à SQL doivent correspondre aux éléments `pgDatabase` et `pgSchemaImportsCsv` du fichier .env.
 
-with open('/content/theme_typologie_cartésien.json', 'r', encoding='utf-8') as f:
-  json_objet = json.load(f)
-
-notice_sujet_list = []
-for i in json_objet["notices"]:
-  notice_sujet_list.append(i)
-
-resultats_df = pd.DataFrame(notice_sujet_list)
-resultats_df.to_csv('sujet_typologie.csv', index=False)
+Créer une nouvelle base de données 
+```sql
+CREATE DATABASE {database_name} ;
 ```
 
-
-Certains de nos json ont demander un véritable travail pour retrouver certaines données perdues. Par exemple la question des dates de publications des mémoires était très difficile à sortir des json. Il existe deux champs startDate et endDate qui ne sont souvent que peu utiliser. Par contre un champs nommé refLabel contenait une balise html avec le nom de l'auteur, le titre du mémoire et la date de publication. En matchant avec une regex la balise titre et la supprimant de la balise refLabel, nous avons été capable de récupérer un grand nombre de champs dates. 
-
-Voici le scripte d'extraction des dates : 
-
-```python
-import pandas as pd
-import re
-
-df = pd.read_csv('/content/sample_data/comparator.csv', on_bad_lines ='warn')
-
-n=0
-resultats = []
-
-
-for index, row in df.iterrows():
-  """
-  boucle récupère les colonnes label, ref et id
-  transforme label et ref en str pour éviter les bug de type
-  créer une regex qui match label
-  si label est matché dans ref alors la string de label est supprimé de ref
-  créer une deuxième regex qui match 4 chiffres à la suite
-  si dans label une date est repérée, alors la date est extrait dans une variable et est stocké dans résultat avec l'id de son objet
-  sinon le terme Null est écrit avec l'id de son objet
-  """
-  label = row['displayLabelLink']
-  ref = row['biblioRef']
-  id = row['id']
-  n= n+1
-
-  label = str(label)
-  ref = str(ref)
-
-  pattern_label = re.compile(re.escape(label))
-
-  if pattern_label.search(ref):
-    ref_clean = ref.replace(label,'')
-
-    pattern_date = re.compile(r'\b\d{4}\b')
-    match = pattern_date.search(ref_clean)
-
-    if match:
-        date = match.group()
-        print(f"{n} {id} Date trouvée: {date}")
-        resultats.append({
-            'id': id,
-            'date': date,
-        })
-  else:
-    print(f"{n} {id} Date trouvée: Null")
-    resultats.append({
-      'id': id,
-      'date': "Null",
-    })
+Créer un nouveau schéma
+```sql
+CREATE SCHEMA {schema_name} ;
 ```
 
-
-### Enrichissement des données
-
-- Utilisation de OpenRefine : 
-    - Nous lui avons donné un CSV avec les sujets. 
-    - Vérification à la main et réconciliation avec wikidata 
-    
-# Traitement de la base de données après la réunion
-
-## Nettoyage - Jules / Mélina
-
-### Nettoyage table "auteurice"
-Tentative de changer la type de données des colonnes "startDate" et "endDate" mais étant donné qu'il n'y a qu'une année et jamais de mois ou d'année, il n'est pas possible d'avoir une année seule considérée comme une donnée "date". Nous pourrions convertir ces intager en date en leur assignant un jour et un mois par défaut, par défaut le 1er janvier. Cela pose plusieurs problèmes :
-- Il existe des dates plus précises pour ces informations, elles ne sont juste pas renseignée dans la base de données. Assignée un jour et un mois reviendrais à inventer des informations là où nous n'en avons pas besoin. 
-- En effet, il n'est pas utile pour les traitements que nous avons prévu d'appliquer à notre base de données de transformer ces données en date. 
-
-*AJOUTER* : Travail sur les dates par Jules
-
-La colonne "authorName" contenait le nom puis le prénom, séparés par une virgule. Ces deux notions ont été déplacés vers la colonne nom et prenom à l'aide de la requête suivante. Dans un premier temps elle ajoute des virgules quand elle manquent puis elle divise la chaine de caractère grâce au dilimitateur "," ou "de" selon les circonstances. 
-
-```SQL
-with sans_virgule as --A l'issue de cette CTE j'ai une nouvelle colonne nommée "authorName_virgule_corrigee" où chaque nom est séparé d'une virgule de son prenom. J'en ai besoin parce que je sépare mes chaines de caractères grâce à cette virgule plus tard dans ma requête--
-	(
-	    select "id", "title", "startDate", "endDate", "authorName",
-        case
-            when "authorName" ~ '^[^ ]+ [^ ]+$' and "authorName" not like '%,%' --Quand "authorName" est une chaine de caractère composé d'une première chaine ne contenant pas d'espace, puis un espace, puis une nouvelle chaine sans espace--
-            then replace("authorName", ' ', ', ') --L'espace est remplacé par une virgule avec un espace--
-            else "authorName" --Reste "AuthorName"--
-        end as authorName_virgule_corrigee
-	    from table_auteurices
-	)
-select
-	"id", "title",
-    case --A l'issue de cette condition, je dispose d'une colonne "Nom" contenant tous les noms--
-        when "authorName" like '% de %' and "authorName" not like '%, %' --Quand "authorName" contient "de" entouré de deux espace et qu'il ne contient pas de virgule suivie d'un espace--
-        then  TRIM('de ' || split_part("authorName", ' de ', 2))--AuthorName, après que les espaces avant et après les chaines de caractère ait été supprimé, est divisée avec le délimiteur espace, on garde la seconde partie de cette chaine séparée en deux--
-        when authorName_virgule_corrigee like '%,%' --Quand authorName contient une virgule | NB : Utilisation de la CTE crée précédemment--
-        then TRIM(split_part(authorName_virgule_corrigee, ',', 1)) --Même action que le THEN précédent mais en utilisant la virgule comme délimitateur | NB : Cette fois nous gardons la 1ère partie car le nom se situe dans la première partie quand la particule "de" n'est pas utilisée--
-        else null --Retourne une cellule "null" si aucune des conditions n'est remplie--
-    end as nom, --Les résultats ressortent dans la colonne "nom"--
-    case --A l'issue de cette condition, je dispose d'une colonne "prenom" contenant tous les prenoms--
-        WHEN "authorName" LIKE '% de %' AND "authorName" NOT LIKE '%, %'
-        THEN TRIM(split_part("authorName", ' ', 1))
-        WHEN authorName_virgule_corrigee LIKE '%,%'
-        THEN TRIM(split_part(authorName_virgule_corrigee, ',', 2))
-        ELSE NULL
-    END AS prenom,
-    "startDate", "endDate"
-FROM sans_virgule;
+#### 3. Lancer le script principal
+```bash
+python run.py
 ```
+ou selon la configuration :
+```bash
+python3 run.py
+```
+
+## Journal de bord
+
+Comme convenu dans les modalités d'évaluation fournies en début d'année, notre journal de bord sera complété en envoyé le 23 février 2025. 
+
+Nous vous fournissons cela dit les différentes évolutions de notre modèle logique ici même. Les différentes étapes de notre réflexion seront précisées dans notre journal de bord. 
 
