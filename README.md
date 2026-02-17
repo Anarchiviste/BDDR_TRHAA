@@ -11,7 +11,7 @@ Vous trouverez au sein de ce respository notre base de données construite dans 
 > 
 > Dans une volonté de fournir un READ ME complet, nous vous répétons les étapes indiquées dans le [github](https://github.com/Chamishe/TNAH_FILM_DB) duquel sont issus ces scripts. Vous pouvez éviter ces explications et consulter notre modèle logique [ici](#journal-de-bord).
 >
-> Si la première installation renvoit des erreurs il ne faut pas relancer le script mais reprendre l'installation de zéro
+> Si la première installation renvoit des erreurs dans le terminal, il ne faut pas relancer le script mais reprendre l'installation de zéro.
 ---
 
 **Tout se passe (configuration, commandes dans le terminal) au sein de ce dossier dans lequel vous lisez ce fichier**
