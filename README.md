@@ -1,4 +1,4 @@
-# BDDR_TRHAA
+# BDDR_TRHAA Branch OpenRefine
 
 Vous trouverez au sein de ce respository notre base de données construite dans le cadre de l'évaluation de l'UE3 - Traitement de la donnée. Elle est issue d'un jeu de données transmises par l'INHA. 
 
